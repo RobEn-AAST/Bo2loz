@@ -9,3 +9,7 @@
  - [ ] celebrate people working hardly
  - [ ] regular memes
  - [ ] points system for github commits and server engagements
+
+
+API:
+https://discordpy.readthedocs.io/en/latest/api.html
