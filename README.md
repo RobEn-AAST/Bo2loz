@@ -11,5 +11,7 @@
  - [ ] points system for github commits and server engagements
 
 
-API:
-https://discordpy.readthedocs.io/en/latest/api.html
+API: https://discordpy.readthedocs.io/en/latest/api.html
+
+install:
+python3 -m pip install -U discord.py
