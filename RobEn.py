@@ -207,6 +207,7 @@ async def on_voice_state_update(member, before, after):
 
                     elif before.channel is not None and after.channel is None and role in member.roles:
                         if before.channel.id == y[1].meeting_id:
+                            memberList.append(member.mention)
                             embed = discord.Embed(
                             description = f"{member.mention} left " + y[1].topic + " meeting voice channel",
                             colour = discord.Colour.red()
