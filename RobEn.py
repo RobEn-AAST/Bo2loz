@@ -31,7 +31,7 @@ class meeting :
         self.active = False
         self.not_confirmed = []
         self.meeting_id = None
-        self.meeting_attendace = []
+        self.meeting_attendance = []
         self.started = False
         return
 
