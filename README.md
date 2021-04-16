@@ -18,10 +18,11 @@ The objectives are :
      - [X] check 1 day before the meeting to send last warning message 
  - [ ] celebrate people working hardly
      - [ ] research the github API
+     - [ ] look for any issues raised and announce in discord
  - [X] memes (Hussein)
      - [X] find a cool programming memes API 
      - [X] integrate the api to send memes to appropriate channel every set period
- - [ ] points system for each member to be desplayed every update
+ - [ ] points system for each member to be displayed every update
      - [ ] research the idea
 
 
