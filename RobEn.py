@@ -1,24 +1,15 @@
 # Work with Python 3.6
+from asyncio.windows_events import NULL
 from operator import truth
 from time import time
 import discord
 from discord import message
-from discord import guild
-from discord import member
-from discord import channel
-from discord.errors import NoMoreItems
-from discord.ext import commands
-from discord.ext.commands.errors import NoPrivateMessage
-from discord.member import Member
 from datetime import timedelta,datetime
 from discord.ext import tasks
 import re
 import random
 import praw
-
-
-
-TOKEN = "BOT TOKEN"
+import json
 
 
 class meeting :
@@ -35,31 +26,55 @@ class meeting :
         self.started = False
         return
 
+
+
+TOKEN = NULL
+CHANNELS = NULL
+chats = NULL
+meetings = NULL
+colors = NULL
+Keywords = NULL
+reddit = NULL
+sync_interval = NULL
+Last_save_time = NULL
 intents = discord.Intents.default()
 intents.members = True
-
-client  = discord.Client(intents = intents)
-colors = [0xFFE4E1, 0x00FF7F, 0xD8BFD8, 0xDC143C, 0xFF4500, 0xDEB887, 0xADFF2F, 0x800000, 0x4682B4, 0x006400, 0x808080, 0xA0522D, 0xF08080, 0xC71585, 0xFFB6C1, 0x00CED1]
-
-Keywords = {"create":{"create","new","construct","generate","form","establish"},
-            "meeting": {"meeting","gathering","appointment","party","interview"},
-            "days": {"satur","sun","mon","tues","wednes","thurs"},
-            "modify": {"change","modify","postpone","reschedule","re-schedule","re schedule"},
-            "remove": {"cancel","remove","shutdown","delete","drop"}
+channels = {
+    "Text" : {},
+    "Audio" : {}
 }
-
-reddit = praw.Reddit(client_id="client ID",
-                     client_secret="client secret",
-                     username = "reddit username",
-                     password = "reddit password",
-                     user_agent="user agent",
-                     check_for_async=False)
+client  = discord.Client(intents = intents)
 
 
+def load_data():
+    global TOKEN
+    global CHANNELS
+    global meetings
+    global colors
+    global Keywords
+    global reddit
+    global channels
+    global Last_save_time
+    global sync_interval
+    f = open("settings.json","r")
+    configration = json.load(f)
+    TOKEN = configration["BOT-TOKEN"]
+    meetings = configration["meetings"]
+    colors = configration["colors"]
+    Keywords = configration["Keywords"]
+    reddit_config = configration["reddit"]
+    #reddit = praw.Reddit(client_id= reddit_config["client ID"],
+                    # client_secret= reddit_config["client secret"],
+                    # username =  reddit_config["reddit username"],
+                    # password =  reddit_config["reddit password"],
+                    # user_agent= reddit_config["user agent"],
+                    # check_for_async=False)
+    Last_save_time = configration["last-save"]
+    sync_interval = configration["synchronization-interval"]
 
-chats = {}
+    return True
 
-meetings = {}
+
 
 def word_to_date(Time,day):
     day = day.replace(" ", "")
@@ -121,13 +136,20 @@ example >> day : wednesday,time : 3:40 pm,location : nasr city, topic : 2a3da ra
 
 @client.event
 async def on_ready():
+    if not load_data():
+        exit()
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
     print('------')
+    for channel in client.get_all_channels():
+        if channel.type == discord.ChannelType.text:
+            channels["Text"][channel.name] = channel.id
+        elif channel.type == discord.ChannelType.voice:
+            channels["Audio"][channel.name] = channel.id
     remind_members.start()
     start_meetings.start()
-    send_memes.start()
+    #send_memes.start()
 
 @client.event
 async def on_member_join(member):
@@ -190,7 +212,6 @@ async def on_voice_state_update(member, before, after):
         if x.name in meetings.keys():
             for y in meetings[x.name]:
                 if y[1].active == True:
-                    channel = client.get_channel(y[1].meeting_id)
                     if before.channel is None and after.channel is not None and role in member.roles:
                         if after.channel.id == y[1].meeting_id:
                             if member.mention in memberList:
@@ -288,21 +309,18 @@ async def on_message(message):
 
 @tasks.loop(hours = 12)
 async def send_memes():
-    client.get_channel(CHANNEL ID HERE)
+    client.get_channel(822910390035284049)
     all_subs = []
     subreddit = reddit.subreddit("ProgrammerHumor")
     top = subreddit.hot(limit=50)
     for submission in top:
         all_subs.append(submission)
-
     random_sub = random.choice(all_subs)
-
     name = random_sub.title
     url = random_sub.url
-
     embed = discord.Embed(title=name, colour = random.choice(colors))
     embed.set_image(url=url)
     await message.channel.send(embed=embed)
 
-
+load_data()
 client.run(TOKEN)
