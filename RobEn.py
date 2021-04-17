@@ -34,6 +34,7 @@ chats = NULL
 meetings = NULL
 colors = NULL
 Keywords = NULL
+reddit_config = NULL
 reddit = NULL
 sync_interval = NULL
 Last_save_time = NULL
@@ -56,8 +57,9 @@ def load_data():
     global channels
     global Last_save_time
     global sync_interval
-    f = open("settings.json","r")
-    configration = json.load(f)
+    global reddit_config
+    with open('settings.json', 'r', encoding='utf-8') as f:
+        configration = json.load(f)
     TOKEN = configration["BOT-TOKEN"]
     meetings = configration["meetings"]
     colors = configration["colors"]
@@ -71,10 +73,33 @@ def load_data():
                     # check_for_async=False)
     Last_save_time = configration["last-save"]
     sync_interval = configration["synchronization-interval"]
-
     return True
 
 
+def save():
+    json_string = {
+        "BOT-TOKEN" : TOKEN,
+
+        "chats" : chats,
+
+        "meetings" : meetings,
+
+        "colors" : colors,
+
+        "Keywords" : Keywords,
+
+        "reddit" : {
+            "client_id" : reddit_config["client ID"],
+            "client_secret" : reddit_config["client secret"],
+            "username" : reddit_config["reddit username"],
+            "password" : reddit_config["reddit password"],
+            "user_agent" : reddit_config["user agent"]
+        },
+        "last-save" : datetime.now(),
+        "synchronization-interval" : sync_interval
+    }
+    with open('settings.json', 'w', encoding='utf-8') as f:
+        json.dump(json_string, f, ensure_ascii=False, indent=4)
 
 def word_to_date(Time,day):
     day = day.replace(" ", "")
@@ -132,7 +157,9 @@ example >> day : wednesday,time : 3:40 pm,location : nasr city, topic : 2a3da ra
     return embed,bo2loz_message
 
 
-
+@tasks.loop(hours = 1)
+async def update_config():
+    save()
 
 @client.event
 async def on_ready():
@@ -149,6 +176,7 @@ async def on_ready():
             channels["Audio"][channel.name] = channel.id
     remind_members.start()
     start_meetings.start()
+    update_config.start()
     #send_memes.start()
 
 @client.event
