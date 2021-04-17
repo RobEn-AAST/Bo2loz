@@ -1,0 +1,36 @@
+{
+    "BOT-TOKEN" : "Discord Bot Token",
+
+    "chats" : {},
+
+    "meetings" : {},
+
+    "colors" : [
+        "0xFFE4E1", "0x00FF7F", "0xD8BFD8",
+        "0xDC143C", "0xFF4500", "0xDEB887",
+        "0xADFF2F", "0x800000", "0x4682B4",
+        "0x006400", "0x808080", "0xA0522D",
+        "0xF08080", "0xC71585", "0xFFB6C1",
+        "0x00CED1"
+    ],
+
+    "Keywords" : {
+        "create":["create","new","construct","generate","form","establish"],
+        "meeting": ["meeting","gathering","appointment","party","interview"],
+        "days": ["satur","sun","mon","tues","wednes","thurs"],
+        "modify": ["change","modify","postpone","reschedule","re-schedule","re schedule"],
+        "remove": ["cancel","remove","shutdown","delete","drop"]
+    },
+
+    "reddit" : {
+        "client_id" : "client ID",
+        "client_secret" : "client secret",
+        "username" : "reddit username",
+        "password" : "reddit password",
+        "user_agent" : "user agent"
+    },
+    "last-save" : "",
+    "synchronization-interval" : 12
+
+
+}
