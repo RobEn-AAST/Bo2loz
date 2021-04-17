@@ -236,6 +236,15 @@ async def on_voice_state_update(member, before, after):
     for user in guild.members:
         if role in user.roles:
             memberList.append(user.mention)
+
+    voice_channel = client.get_channel("VOICE CHANNEL ID HERE")
+
+    members = voice_channel.members
+
+    membersVC = []
+    for member in members:
+        if role in member.roles:
+            membersVC.append(member.mention)
     for x in client.get_all_members():
         if x.name in meetings.keys():
             for y in meetings[x.name]:
@@ -243,6 +252,7 @@ async def on_voice_state_update(member, before, after):
                     if before.channel is None and after.channel is not None and role in member.roles:
                         if after.channel.id == y[1].meeting_id:
                             if member.mention in memberList:
+                                memberList = list(set(memberList)^set(memids))
                                 memberList.remove(member.mention)
                                 embed = discord.Embed(
                                     description = f"{member.mention} joined  " + y[1].topic + " meeting voice channel",
@@ -250,13 +260,13 @@ async def on_voice_state_update(member, before, after):
                                 )
                                 embed.set_footer(text= f"ID: {member.id}  •  {datetime.now()}")
                                 embed.set_author(name=member.display_name, icon_url=member.avatar_url)
-                                embed.add_field(name="Missing members", value=", ".join(memberList), inline=True)
+                                embed.add_field(name="Missing members", value=", ".join(memberList), inline=False)
+                                embed.add_field(name="Members in the meeting", value=", ".join(membersVC))
                                 await client.get_channel(822588656627089500).send(embed=embed)
 
 
                     elif before.channel is not None and after.channel is None and role in member.roles:
                         if before.channel.id == y[1].meeting_id:
-                            memberList.append(member.mention)
                             embed = discord.Embed(
                             description = f"{member.mention} left " + y[1].topic + " meeting voice channel",
                             colour = discord.Colour.red()
