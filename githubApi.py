@@ -1,7 +1,6 @@
-from github import Github
 import requests
 import json
-import discord
+from assets import client,channels,GIT_HUB_TOKEN
 from discord.ext import tasks
 
 current_issues = []
@@ -12,9 +11,9 @@ repo_name = ""
 async def post_issues():
     global current_issues
 
-    issue_channel = client.get_channel(ISSUECHANNELID)
+    issue_channel = client.get_channel(channels["ISSUE CHANNEL NAME GOES HERE"])
 
-    headers = {'Authorization': GITHUBTOKEN}
+    headers = {'Authorization': GIT_HUB_TOKEN}
     new_issues = json.loads(
         requests.get("https://api.github.com/repos/{org_name}/{repo_name}/issues?state=open", headers).content.decode())
 

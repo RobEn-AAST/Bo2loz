@@ -4,10 +4,53 @@ from praw import Reddit
 import re
 from datetime import timedelta,datetime
 from discord.ext import tasks
-
+from collections import namedtuple
 intents = Intents.default()
 intents.members = True
 client  = Client(intents = intents)
+
+
+
+Active_meetings = []
+
+
+class meeting :
+    def __init__(self, input):
+        if type(input) == str:
+            self.admin = input
+            self.time = None
+            self.location = None
+            self.topic= None
+            self.active = False
+            self.not_confirmed = []
+            self.meeting_id = None
+            self.meeting_attendance = []
+            self.started = False
+        else:
+            self.admin = input["admin"]
+            self.time = input["time"]
+            self.location = input["location"]
+            self.topic= input["topic"]
+            self.active = input["admin"]
+            self.not_confirmed = input["not_confirmed"]
+            self.meeting_id = input["meeting_id"]
+            self.meeting_attendance = input["meeting_attendance"]
+            self.started = input["started"]
+        return
+    @staticmethod
+    def dic(ob):
+        dictionary = {
+            "admin" : ob.admin,
+            "time" : ob.time,
+            "location" : ob.location,
+            "topic" : ob.topic,
+            "admin" : ob.admin,
+            "not_confirmed" : ob.not_confirmed,
+            "meeting_id" : ob.meeting_id,
+            "meeting_attendance" : ob.meeting_attendance,
+            "started" : ob.started
+        }
+        return dictionary
 
 
 standard_messages = {
@@ -56,25 +99,36 @@ def Update_Chat(member_name,message):
         chats.update({ member_name : message })
 
 def SaveConfig():
+    meetings_map = {}
+    for x in meetings.keys():
+        if x not in meetings_map:
+            meetings_map[x] = []
+        for y in meetings[x]:
+            y.admin = x
+            meetings_map[x].append(meeting.dic(y))
     json_string = {
-        "BOT-TOKEN" : TOKEN,
+        "BOT-TOKEN" : BOT_TOKEN,
+
+        "GitHub-Token" : GIT_HUB_TOKEN,
+
+        "Server-ID" : str(SERVER_ID),
 
         "chats" : chats,
 
-        "meetings" : meetings,
+        "meetings" : meetings_map,
 
-        "colors" : colors,
+        "colors" : list(map(str,list(map(hex,colors)))),
 
         "Keywords" : Keywords,
 
         "reddit" : {
-            "client_id" : reddit_config["client ID"],
-            "client_secret" : reddit_config["client secret"],
-            "username" : reddit_config["reddit username"],
-            "password" : reddit_config["reddit password"],
-            "user_agent" : reddit_config["user agent"]
+            "client_id" : reddit_config["client_id"],
+            "client_secret" : reddit_config["client_secret"],
+            "username" : reddit_config["username"],
+            "password" : reddit_config["password"],
+            "user_agent" : reddit_config["user_agent"]
         },
-        "last-SaveConfig" : datetime.now(),
+        "last-save" : datetime.now().strftime("%d-%b-%Y %H:%M:%S"),
         "synchronization-interval" : sync_interval
     }
     with open('settings.json', 'w', encoding='utf-8') as f:
@@ -87,21 +141,29 @@ async def update_config():
 
 with open('settings.json', 'r', encoding='utf-8') as f:
     configration = json.load(f)
-TOKEN = configration["BOT-TOKEN"]
-meetings = configration["meetings"]
-colors = configration["colors"]
+BOT_TOKEN = configration["BOT-TOKEN"]
+GIT_HUB_TOKEN = configration["GitHub-Token"]
+SERVER_ID = int(configration["Server-ID"])
+y = configration["meetings"]
+meetings = {}
+for x in y.keys():
+    if x not in  meetings.keys():
+        meetings[x] = []
+    for z in y[x]:
+        meetings[x].append(meeting(z))
+colors = list(map(lambda x: int(x, 16),configration["colors"]))
 chats = configration["chats"]
 Keywords = configration["Keywords"]
 reddit_config = configration["reddit"]
 reddit = Reddit(
-    client_id= reddit_config["client ID"],
-    client_secret= reddit_config["client secret"],
-    username =  reddit_config["reddit username"],
-    password =  reddit_config["reddit password"],
-    user_agent= reddit_config["user agent"],
+    client_id= reddit_config["client_id"],
+    client_secret= reddit_config["client_secret"],
+    username =  reddit_config["username"],
+    password =  reddit_config["password"],
+    user_agent= reddit_config["user_agent"],
     check_for_async=False
     )
-Last_SaveConfig_time = configration["last-SaveConfig"]
+Last_SaveConfig_time = datetime.strptime(configration["last-save"], '%d-%b-%Y %H:%M:%S')
 sync_interval = configration["synchronization-interval"]
 
 channels = {

@@ -7,7 +7,7 @@ from discord import message,Embed
 
 @tasks.loop(hours = 12)
 async def send_memes():
-    client.get_channel(822910390035284049)
+    Channel = client.get_channel(822910390035284049)
     all_subs = []
     subreddit = reddit.subreddit("ProgrammerHumor")
     top = subreddit.hot(limit=50)
@@ -18,7 +18,7 @@ async def send_memes():
     url = random_sub.url
     embed = Embed(title=name, colour = random.choice(colors))
     embed.set_image(url=url)
-    await message.channel.send(embed=embed)
+    await Channel.send(embed=embed)
 
 
 

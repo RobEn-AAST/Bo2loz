@@ -1,9 +1,9 @@
 # Work with Python 3.6
 import discord
-from datetime import datetime
-import random
-from assets import update_config,Update_Chat,channels,client,TOKEN,chats,meetings,colors,Keywords,reddit,standard_messages
-from meetings import MakeNewMeeting
+from assets import update_config,Update_Chat
+from assets import channels,client,chats,meetings,Keywords,standard_messages
+from assets import BOT_TOKEN,meeting
+from meetings import MakeNewMeeting,remind_members,start_meetings
 from memes import send_memes,SendMeme
 
 
@@ -15,13 +15,13 @@ def Logic_Handling(value,member_name):
         meetings[member_name] = []
     if value:
         if last_message == member_name +" Do you wish to make a new meeting ?":
-            meetings[member_name].append((datetime.now(),meetings.meeting(member_name= member_name)))
+            meetings[member_name].append(meeting(member_name))
             bo2loz_message = member_name + standard_messages["new meeting info"]
             flag = False
             for x in meetings[member_name]:
-                if x[1].topic == None and flag == False:
+                if x.topic == None and flag == False:
                     flag = True
-                elif x[1].topic == None and flag == True:
+                elif x.topic == None and flag == True:
                     bo2loz_message = member_name + " You cannot make a new meeting until you finish setting up the previous meeting"
     else:
         bo2loz_message = "okai :pleading_face::pleading_face::pleading_face:"
@@ -46,8 +46,8 @@ async def on_ready():
             channels["Text"][channel.name] = channel.id
         elif channel.type == discord.ChannelType.voice:
             channels["Audio"][channel.name] = channel.id
-    meetings.remind_members.start()
-    meetings.start_meetings.start()
+    remind_members.start()
+    start_meetings.start()
     update_config.start()
     send_memes.start()
 
@@ -67,35 +67,32 @@ async def on_member_join(member):
 
 @client.event
 async def on_message(message):
-    if message.author.bot:
+    if message.author.bot or message.channel.id != message.author.dm_channel.id:
         return
     global chats
     global meetings
-    if message.channel == client.get_channel(822890915906846720):
-        return
-    if "bo2loz" in message.content.lower():
-        if "yes" in message.content.lower() or "no" in message.content.lower() :
-            embed,bo2loz_message = Logic_Handling(True if "yes" in message.content.lower() else False,message.author.name)
-        else:
-            if any(x in message.content.lower() for x in Keywords.get("create")) and any(x in message.content.lower() for x in Keywords.get("meeting")):
-                bo2loz_message = message.author.name +" Do you wish to make a new meeting ?"
-                embed = discord.Embed(
-                                    description = bo2loz_message,
-                                    colour = discord.Colour.green()
-                                )
-            elif "time" in message.content.lower() and "location" in message.content.lower() and "day" in message.content.lower() and "topic" in message.content.lower():
-                await MakeNewMeeting(message)
-            else:
-                bo2loz_message = "3ayez eh ?????"
+    if "yes" in message.content.lower() or "no" in message.content.lower() :
+        embed,bo2loz_message = Logic_Handling(True if "yes" in message.content.lower() else False,message.author.name)
+    else:
+        if any(x in message.content.lower() for x in Keywords.get("create")) and any(x in message.content.lower() for x in Keywords.get("meeting")):
+            bo2loz_message = message.author.name +" Do you wish to make a new meeting ?"
             embed = discord.Embed(
                                 description = bo2loz_message,
                                 colour = discord.Colour.green()
                             )
-        Update_Chat(member_name= message.author.name, message= bo2loz_message)
-        await message.channel.send(embed = embed)
+        elif "time" in message.content.lower() and "location" in message.content.lower() and "day" in message.content.lower() and "topic" in message.content.lower():
+            await MakeNewMeeting(message)
+            return
+        else:
+            bo2loz_message = "Can I help you `:eyes: `"
+            embed = discord.Embed(
+                            description = bo2loz_message,
+                            colour = discord.Colour.green()
+                        )
+    Update_Chat(member_name= message.author.name, message= bo2loz_message)
+    await message.channel.send(embed = embed)
     if message.content == "!memes":
         await SendMeme(message)
 
 
-
-client.run(TOKEN)
+client.run(BOT_TOKEN)
