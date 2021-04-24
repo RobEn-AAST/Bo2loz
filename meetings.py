@@ -61,7 +61,7 @@ async def on_voice_state_update(member, before, after):
     for user in guild.members:
         if role in user.roles:
             memberList.append(user.mention)
-            
+
     for x in Active_meetings:
         voice_channel = client.get_channel(x)
 
@@ -78,6 +78,12 @@ async def on_voice_state_update(member, before, after):
                         if before.channel is None and after.channel is not None and role in member.roles:
                             if after.channel.id == y[1].meeting_id:
                                 if member.mention in memberList:
+                                    voice_channel = client.get_channel(y[1].meeting_id)
+                                    users = voice_channel.members
+                                    membersVC = []
+                                    for user in users:
+                                        if role in member.roles:
+                                            membersVC.append(user.mention)
                                     memberList = list(set(memberList)^set(memids))
                                     memberList.remove(member.mention)
                                     embed = Embed(
