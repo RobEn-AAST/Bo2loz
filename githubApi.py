@@ -11,7 +11,7 @@ repo_name = ""
 async def post_issues():
     global current_issues
 
-    issue_channel = client.get_channel(channels["ISSUE CHANNEL NAME GOES HERE"])
+    issue_channel = client.get_channel(835993492807221278)
 
     headers = {'Authorization': GIT_HUB_TOKEN}
     new_issues = json.loads(

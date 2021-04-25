@@ -49,7 +49,7 @@ async def start_meetings():
                 if y != None and datetime.strptime(y.time, '%d-%b-%Y')  >= datetime.now() and not y.started:
                     y.started = True
                     Active_meetings.append(x.id)
-                    channel = client.get_channel(channels["Meeting channel name"])
+                    channel = client.get_channel(807682739523682330)
                     await channel.send("Hello every one...Bo2loz here,\nThe " + y.topic + " meeting will start now so please enter the voice channel now.\nGood luck Team !!!")
 
 

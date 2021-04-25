@@ -55,9 +55,9 @@ async def on_ready():
 async def on_member_join(member):
     if member.bot:
         return
-    role = member.guild.get_role(822598861402013707)
+    role = member.guild.get_role(809810876084781076)
     await member.add_roles(role)
-    role = member.guild.get_role(822599244841091092)
+    role = member.guild.get_role(807682737649614861)
     await member.add_roles(role)
     await member.create_dm()
     welcome_message = 'Hi ' + member.name + standard_messages["welcome to robben"]
@@ -74,7 +74,7 @@ async def on_message(message):
     if "yes" in message.content.lower() or "no" in message.content.lower() :
         embed,bo2loz_message = Logic_Handling(True if "yes" in message.content.lower() else False,message.author.name)
     else:
-        if any(x in message.content.lower() for x in Keywords.get("create")) and any(x in message.content.lower() for x in Keywords.get("meeting")):
+        if any(x in message.content.lower() for x in Keywords["create"] and any(x in message.content.lower() for x in Keywords["meeting"]:
             bo2loz_message = message.author.name +" Do you wish to make a new meeting ?"
             embed = discord.Embed(
                                 description = bo2loz_message,
