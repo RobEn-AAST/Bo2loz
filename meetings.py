@@ -76,9 +76,9 @@ async def on_voice_state_update(member, before, after):
                 for y in meetings[x.name]:
                     if y.active == True:
                         if before.channel is None and after.channel is not None and role in member.roles:
-                            if after.channel.id == y[1].meeting_id:
+                            if after.channel.id == y.meeting_id:
                                 if member.mention in memberList:
-                                    voice_channel = client.get_channel(y[1].meeting_id)
+                                    voice_channel = client.get_channel(y.meeting_id)
                                     users = voice_channel.members
                                     membersVC = []
                                     for user in users:
