@@ -33,8 +33,8 @@ async def remind_members():
                 if (datetime.strptime(y.time , '%d-%b-%Y') - datetime.today()).days + 1 < 2:
                     mem = client.get_all_members()
                     for z in mem:
-                        if z.name  in y[1].not_confirmed:
-                            message = "The is a meeting shceduled on " + y[1].day + "  " + y[1].time + " at" + y[1].location + "\nplease open the meetings channel and check it out\nif you cannot arrive please send me a message containing the word excuse and your excuse\n\nalways glad to help :nerd: :nerd: :nerd:"
+                        if z.name  in y.not_confirmed:
+                            message = "The is a meeting shceduled on " + y.day + "  " + y.time + " at" + y.location + "\nplease open the meetings channel and check it out\nif you cannot arrive please send Karim Kohel a message containing the word excuse and your excuse\n\nalways glad to help :nerd: :nerd: :nerd:"
                             channel = await z.create_dm()
                             await channel.send(message)
 
@@ -46,7 +46,8 @@ async def start_meetings():
     for x in members:
         if x.name in meetings.keys():
             for y in meetings[x.name]:
-                if y != None and y.active and datetime.strptime(y.time, '%d-%b-%Y')  >= datetime.now() and not y.started:
+                time = datetime.strptime(y.time, '%d-%b-%Y')
+                if y != None and y.active and  time >= datetime.now() and not y.started:
                     y.started = True
                     Active_meetings.append(x.id)
                     channel = client.get_channel(807682739523682330)
@@ -76,9 +77,9 @@ async def on_voice_state_update(member, before, after):
                 for y in meetings[x.name]:
                     if y.active == True:
                         if before.channel is None and after.channel is not None and role in member.roles:
-                            if after.channel.id == y[1].meeting_id:
+                            if after.channel.id == y.meeting_id:
                                 if member.mention in memberList:
-                                    voice_channel = client.get_channel(y[1].meeting_id)
+                                    voice_channel = client.get_channel(y.meeting_id)
                                     users = voice_channel.members
                                     membersVC = []
                                     for user in users:
@@ -87,7 +88,7 @@ async def on_voice_state_update(member, before, after):
                                     memberList = list(set(memberList)^set(memids))
                                     memberList.remove(member.mention)
                                     embed = Embed(
-                                        description = f"{member.mention} joined  " + y[1].topic + " meeting voice channel",
+                                        description = f"{member.mention} joined  " + y.topic + " meeting voice channel",
                                         colour = Colour.green()
                                     )
                                     embed.set_footer(text= f"ID: {member.id}  •  {datetime.now()}")
@@ -98,9 +99,9 @@ async def on_voice_state_update(member, before, after):
 
 
                         elif before.channel is not None and after.channel is None and role in member.roles:
-                            if before.channel.id == y[1].meeting_id:
+                            if before.channel.id == y.meeting_id:
                                 embed = Embed(
-                                description = f"{member.mention} left " + y[1].topic + " meeting voice channel",
+                                description = f"{member.mention} left " + y.topic + " meeting voice channel",
                                 colour = Colour.red()
                                 )
                                 embed.set_footer(text= f"ID: {member.id}  •  {datetime.now()}")
