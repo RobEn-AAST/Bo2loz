@@ -84,7 +84,7 @@ async def on_message(message):
             await MakeNewMeeting(message)
             return
         else:
-            bo2loz_message = "Can I help you `:eyes: `"
+            bo2loz_message = "Can I help you :eyes:"
             embed = discord.Embed(
                             description = bo2loz_message,
                             colour = discord.Colour.green()
