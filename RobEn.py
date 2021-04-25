@@ -74,7 +74,7 @@ async def on_message(message):
     if "yes" in message.content.lower() or "no" in message.content.lower() :
         embed,bo2loz_message = Logic_Handling(True if "yes" in message.content.lower() else False,message.author.name)
     else:
-        if any(x in message.content.lower() for x in Keywords["create"] and any(x in message.content.lower() for x in Keywords["meeting"]:
+        if any(x in message.content.lower() for x in Keywords["create"]) and any(x in message.content.lower() for x in Keywords["meeting"]):
             bo2loz_message = message.author.name +" Do you wish to make a new meeting ?"
             embed = discord.Embed(
                                 description = bo2loz_message,
