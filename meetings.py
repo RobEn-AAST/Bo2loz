@@ -137,6 +137,6 @@ async def MakeNewMeeting(message):
                 if not y.bot and y.name != message.author.name :
                     x.not_confirmed.append(y.name)
                     break
-            channel = client.get_channel(822890915906846720)
+            channel = client.get_channel(807682739523682330)
             await channel.send("Hello every one Bo2loz here\n" + message.author.name + " Just created a meeting!!!\n" +"meeting location : " + location + "\nmeeting time : " + day + "   " + time + "\nmeeting topic :" + topic + "\n\nif you have any excuses please send me a message containing the word (excuse) and your excuse\n\nalways glad to help :nerd: :nerd: :nerd:")
             await message.channel.send("meeting made successfully !\n your voice channel is ready !")
