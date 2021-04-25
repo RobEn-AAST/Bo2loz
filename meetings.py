@@ -46,7 +46,7 @@ async def start_meetings():
     for x in members:
         if x.name in meetings.keys():
             for y in meetings[x.name]:
-                if y != None and datetime.strptime(y.time, '%d-%b-%Y')  >= datetime.now() and not y.started:
+                if y != None and y.active and datetime.strptime(y.time, '%d-%b-%Y')  >= datetime.now() and not y.started:
                     y.started = True
                     Active_meetings.append(x.id)
                     channel = client.get_channel(807682739523682330)

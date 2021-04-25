@@ -31,7 +31,7 @@ class meeting :
             self.time = input["time"]
             self.location = input["location"]
             self.topic= input["topic"]
-            self.active = input["admin"]
+            self.active = True
             self.not_confirmed = input["not_confirmed"]
             self.meeting_id = input["meeting_id"]
             self.meeting_attendance = input["meeting_attendance"]
