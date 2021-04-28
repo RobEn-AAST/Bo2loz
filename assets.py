@@ -16,23 +16,25 @@ Active_meetings = []
 
 class meeting :
     def __init__(self, input):
-        if type(input) == str:
+        if type(input) == int:
             self.admin = input
             self.time = None
+            self.excuse = {}
             self.location = None
             self.topic= None
             self.active = False
-            self.not_confirmed = []
+            self.confirmed = []
             self.meeting_id = None
             self.meeting_attendance = []
             self.started = False
         else:
             self.admin = input["admin"]
-            self.time = input["time"]
+            self.time = datetime.strptime(input["time"],"%c")
             self.location = input["location"]
             self.topic= input["topic"]
             self.active = True
-            self.not_confirmed = input["not_confirmed"]
+            self.excuse = input["excuse"]
+            self.confirmed = input["confirmed"]
             self.meeting_id = input["meeting_id"]
             self.meeting_attendance = input["meeting_attendance"]
             self.started = input["started"]
@@ -41,11 +43,12 @@ class meeting :
     def dic(ob):
         dictionary = {
             "admin" : ob.admin,
-            "time" : ob.time,
+            "time" : ob.time.strftime("%c"),
             "location" : ob.location,
             "topic" : ob.topic,
             "admin" : ob.admin,
-            "not_confirmed" : ob.not_confirmed,
+            "confirmed" : ob.confirmed,
+            "excuse" : ob.excuse,
             "meeting_id" : ob.meeting_id,
             "meeting_attendance" : ob.meeting_attendance,
             "started" : ob.started
@@ -73,7 +76,15 @@ example >> day : wednesday,time : 3:40 pm,location : nasr city, topic : 2a3da ra
 - If you are new to discord please check our toturial on youtube
         https://www.youtube.com/watch?v=09y5ydmNwGA
 - If wish to review our rules at any time, they are available on the roles channel
-        '''
+        ''',
+    "edit meeting info" : ''' please give me the meeting information in one message separated by commas...meeting information are
+1 - meeting day
+2 - meeting time >> ex: (2:30 pm)
+3 - meeting location
+4 - meeting topic
+5 - meeting id
+example >> day : wednesday,time : 3:40 pm,location : nasr city, topic : 2a3da ray2a, id : 123456789
+'''
 }
 
 def word_to_date(Time,day):
@@ -104,7 +115,6 @@ def SaveConfig():
         if x not in meetings_map:
             meetings_map[x] = []
         for y in meetings[x]:
-            y.admin = x
             meetings_map[x].append(meeting.dic(y))
     json_string = {
         "BOT-TOKEN" : BOT_TOKEN,
@@ -128,7 +138,7 @@ def SaveConfig():
             "password" : reddit_config["password"],
             "user_agent" : reddit_config["user_agent"]
         },
-        "last-save" : datetime.now().strftime("%d-%b-%Y %H:%M:%S"),
+        "last-save" : datetime.now().strftime("%c"),
         "synchronization-interval" : sync_interval
     }
     with open('settings.json', 'w', encoding='utf-8') as f:
@@ -163,7 +173,7 @@ reddit = Reddit(
     user_agent= reddit_config["user_agent"],
     check_for_async=False
     )
-Last_SaveConfig_time = datetime.strptime(configration["last-save"], '%d-%b-%Y %H:%M:%S')
+Last_SaveConfig_time = datetime.strptime(configration["last-save"], '%c')
 sync_interval = configration["synchronization-interval"]
 
 channels = {

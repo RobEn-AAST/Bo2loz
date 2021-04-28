@@ -1,6 +1,6 @@
 import requests
 import json
-from assets import client,channels,GIT_HUB_TOKEN
+from assets import client,GIT_HUB_TOKEN
 from discord.ext import tasks
 
 current_issues = []

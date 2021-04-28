@@ -1,7 +1,7 @@
 from discord.ext import tasks
 from assets import client,colors,reddit
 import random
-from discord import message,Embed
+from discord import Embed
 
 
 
