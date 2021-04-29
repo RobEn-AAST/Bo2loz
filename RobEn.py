@@ -1,7 +1,5 @@
 # Work with Python 3.6
 import discord
-from discord import channel
-from discord.guild import Guild
 from assets import update_config,Update_Chat
 from assets import channels,client,chats,meetings,Keywords,standard_messages,SERVER_ID
 from assets import BOT_TOKEN,meeting
@@ -17,7 +15,6 @@ def Logic_Handling(value,member_name,member_id):
         meetings[member_name] = []
     if value:
         if last_message == member_name +" Do you wish to make a new meeting ?":
-            meetings[member_name].append(meeting(member_id))
             bo2loz_message = member_name + standard_messages["new meeting info"]
             flag = False
             for x in meetings[member_name]:
@@ -25,6 +22,8 @@ def Logic_Handling(value,member_name,member_id):
                     flag = True
                 elif x.topic == None and flag == True:
                     bo2loz_message = member_name + " You cannot make a new meeting until you finish setting up the previous meeting"
+                    return
+            meetings[member_name].append(meeting(member_id))
         elif last_message == member_name +" Do you wish to modify a meeting ?":
             bo2loz_message = member_name + standard_messages["edit meeting info"]
         elif last_message == member_name + " Do you wish to cancel a meeting ?":
@@ -52,10 +51,10 @@ async def on_ready():
             channels["Text"][channel.name] = channel.id
         elif channel.type == discord.ChannelType.voice:
             channels["Audio"][channel.name] = channel.id
-    #remind_members.start()
-    #start_meetings.start()
+    remind_members.start()
+    start_meetings.start()
     update_config.start()
-    #send_memes.start()
+    send_memes.start()
 
 @client.event
 async def on_member_join(member):

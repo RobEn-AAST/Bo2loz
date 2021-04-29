@@ -130,11 +130,10 @@ async def MakeNewMeeting(message):
             for y in client.get_all_channels():
                 if y.name == topic + " Voice meeting":
                         x.meeting_id = y.id
-            meetingid = str(x.meeting_id)
             SaveConfig()
             channel = client.get_channel(807682739523682330)
-            await channel.send('Hello every one Bo2loz here\n' + message.author.name + ' Just created a meeting!!!\nmeeting location : ' + location + '\nmeeting time : ' + x.time.strftime("%c") + '\nmeeting topic :' + topic + '\nmeeting id : ' + meetingid + '\n\nif you have any excuses please send me a message containing the word excuse + meeting id + your excuse (example : excuse 123456789 I was sick)\nTo confirm send me a message containing the word confirm + meeting id (example : confirm 123456789)\n\nalways glad to help :nerd: :nerd: :nerd:')
-            await message.channel.send("meeting made successfully !\n your voice channel is ready !\n meeting id : " + meetingid)
+            await channel.send('Hello every one Bo2loz here\n' + message.author.name + ' Just created a meeting!!!\nmeeting location : ' + location + '\nmeeting time : ' + x.time.strftime("%c") + '\nmeeting topic :' + topic + '\nmeeting id : ' + str(x.meeting_id) + '\n\nif you have any excuses please send me a message containing the word excuse + meeting id + your excuse (example : excuse 123456789 I was sick)\nTo confirm send me a message containing the word confirm + meeting id (example : confirm 123456789)\n\nalways glad to help :nerd: :nerd: :nerd:')
+            await message.channel.send("meeting made successfully !\n your voice channel is ready !\n meeting id : " + str(x.meeting_id))
 
 
 async def ModifyMeeting(message):
@@ -147,31 +146,33 @@ async def ModifyMeeting(message):
     day = day[day.index(':') + 1:day.index(',')  if ',' in day else len(day)].strip()
     location = location[location.index(':') + 1:location.index(',') if ',' in location else len(location)].strip()
     topic = topic[topic.index(':') + 1:topic.index(',') if ',' in topic else len(topic)].strip()
-    id = id[id.index(':') + 1:id.index(',') if ',' in id else len(id)].strip()
-    current = NULL
+    id = int(id[id.index(':') + 1:id.index(',') if ',' in id else len(id)].strip())
     for x in meetings[message.author.name]:
-        if x.active == True and x.id == id:
+        if x.active == True and x.meeting_id == id:
             x.time = word_to_date(time,day)
             x.topic = topic
             x.location = location
-            current = x
-            break
-    channel = client.get_channel(807682739523682330)
-    await channel.send("Hello every one Bo2loz here\n" + message.author.name + " Just modified the "+ current.topic +" meeting!!!\n" +"meeting location : " + location + "\nmeeting time : " + day + "   " + time + "\nmeeting topic :" + topic + "\n\nif you have any excuses please send me a message containing the word (excuse) and your excuse\n\nalways glad to help :nerd: :nerd: :nerd:")
-    await message.channel.send("meeting modified successfully !")
+            channel = client.get_channel(807682739523682330)
+            await channel.send("Hello every one Bo2loz here\n" + message.author.name + " Just modified the "+ topic +" meeting!!!\n" +"meeting location : " + location + "\nmeeting time : " + day + "   " + time + "\nmeeting topic :" + topic + "\n\nif you have any excuses please send me a message containing the word (excuse) and your excuse\n\nalways glad to help :nerd: :nerd: :nerd:")
+            await message.channel.send("meeting modified successfully !")
+            SaveConfig()
+            return
+    await message.channel.send("error modifying meeting !")
+    return
 
 
 async def CancelMeeting(message):
     id = findall("[iI][Dd]\s*:.+,*",message.content.lower())[0]
-    id = id[id.index(':') + 1:len(id)].strip()
+    id = int(id[id.index(':') + 1:len(id)].strip())
     for x in meetings[message.author.name]:
-        if x.active == True and x.id == id:
+        if x.active == True and x.meeting_id == int(id):
             meetings[message.author.name].remove(x)
             channel = client.get_channel(id)
             await channel.delete()
             channel = client.get_channel(807682739523682330)
             await channel.send("Hello every one Bo2loz here\n" + message.author.name + " Just Cancelled the "+ x.topic + " meeting\n\nalways glad to help :nerd: :nerd: :nerd:")
             await message.channel.send("meeting Cancelled successfully !")
+            SaveConfig()
             return
     await message.channel.send("Error cancelling the meeting\n please check your meeting id")
     return
